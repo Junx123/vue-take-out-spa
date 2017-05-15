@@ -13,7 +13,7 @@
             </div>
         </div>
         <keep-alive>
-            <router-view :seller="seller"></router-view>
+            <router-view :seller="seller" :goods="goods"></router-view>
         </keep-alive>
     </div>
 </template>
@@ -26,7 +26,8 @@
     export default {
         data () {
             return {
-                seller: {}
+                seller: {},
+                goods: []
             };
         },
         created () {
@@ -34,6 +35,12 @@
                 response = response.body;
                 if (response.errno === ERR_OK) {
                     this.seller = response.data;
+                }
+            });
+            this.$http.get('/api/goods').then((response) => {
+                response = response.body;
+                if (response.errno === ERR_OK) {
+                    this.goods = response.data;
                 }
             });
         },
