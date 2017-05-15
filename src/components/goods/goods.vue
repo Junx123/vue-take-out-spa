@@ -52,16 +52,17 @@
     import cartcontrol from '../cartcontrol/cartcontrol.vue';
     import food from '../food/food.vue';
 
-    const ERR_OK = 0;
     export default {
         props: {
             seller: {
                 type: Object
+            },
+            goods: {
+                type: Array
             }
         },
         data () {
             return {
-                goods: [],
                 listHeight: [],
                 scrollY: 0,
                 selectedFood: {}
@@ -93,16 +94,13 @@
         created () {
             window.bus.$on('cart.add', this._drop);
             this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
-            this.$http.get('/api/goods').then((response) => {
-                response = response.body;
-                if (response.errno === ERR_OK) {
-                    this.goods = response.data;
-                    this.$nextTick(() => {
-                        this._initScroll();
-                        this._calculateHeight();
-                    });
-                }
+            this.$nextTick(() => {
+                this._initScroll();
+                this._calculateHeight();
             });
+        },
+        updated () {
+            this._refreshScroll();
         },
         methods: {
             selectMenu (index, event) {
@@ -138,6 +136,10 @@
                 this.foodsScroll.on('scroll', (pos) => {
                     this.scrollY = Math.abs(Math.round(pos.y));
                 });
+            },
+            _refreshScroll () {
+                this.menuScroll.refresh();
+                this.foodsScroll.refresh();
             },
             _calculateHeight () {
                 let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');

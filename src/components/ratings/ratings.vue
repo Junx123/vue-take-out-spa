@@ -59,6 +59,7 @@
             <div class="no-rating" v-else>暂无评价</div>
         </div>
         </div>
+        <shopcart ref="shopcart" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"></shopcart>
     </div>
 </template>
 
@@ -68,6 +69,7 @@
     import ratingselect from '../ratingselect/ratingselect.vue';
     import {formatDate} from '../../common/js/date.js';
     import BScroll from 'better-scroll';
+    import shopcart from '../shopcart/shopcart.vue';
 
     const ALL = 2;
     const ERR_OK = 0;
@@ -75,6 +77,9 @@
         props: {
             seller: {
                 type: Object
+            },
+            goods: {
+                type: Array
             }
         },
         data () {
@@ -101,8 +106,23 @@
                     click: true
                     });
                 });
-                console.log(1);
             });
+        },
+        // updated () {
+        //     this.scroll.refresh();
+        // },
+        computed: {
+            selectFoods () {
+                let foods = [];
+                this.goods.forEach((good) => {
+                    good.foods.forEach((food) => {
+                        if (food.count) {
+                            foods.push(food);
+                        }
+                    });
+                });
+                return foods;
+            }
         },
         methods: {
             showRating (type, text) {
@@ -139,7 +159,8 @@
         components: {
             star,
             split,
-            ratingselect
+            ratingselect,
+            shopcart
         }
     };
 </script>
@@ -149,7 +170,7 @@
     .ratings
         position: absolute
         top: 174px
-        bottom: 0
+        bottom: 46px
         width: 100%
         overflow: hidden
         .score-wrapper
